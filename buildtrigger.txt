@@ -1,0 +1,302 @@
+File to trigger CI build.
+
+///  
+
+
+Test Checkin
+10/MAR/2020 - philhoden
+14/APR/2020 - philhoden
+15/APR/2020 - philhoden
+08/MAY/2020 - philhoden
+08/MAY/2020 - philhoden
+22/MAY/2020 - philhoden
+24/7/2020 - SCA1350
+29/7/2020 - SCA1350
+30/7/2020 - SCA1350
+04/8/2020 - SCA1350
+Aug 04, 2020 - UTR-13266
+12/8/2020 - SCA1354
+12/1 - Trigger hotfix ADAMIGR-10488/10489
+07/12/2020 - hotfix/SCA-2391
+12/21/2020 - SCA-2536
+02/24/2021 - SCA-2679_12
+03/11/2021 - DF74252
+03/29/2021 - DSWP-5599
+05/10/2021 - EP18493
+05/28/2021 - HF97197
+06/23/2021 - JZ67996
+07/01/2021 - KS76015
+07/19/2021 - DSWP-8505
+07/21/2021 - UFD-19779
+10/08/2021 - UFD-20986
+04/10/2021 - SCA-3961
+07/02/2022 - SC5-95
+09/11/2021 - SCA-3585
+06/16/2022 - SCA5-357
+24/21/2021 - UFD-24315
+25/11/2021 - SCA-4105
+09/05/2022 - SCA5-154
+06/20/2022 - SCA5-357
+07/28/2022 - SCA5-389
+11/01/2022 - SCA5-434
+11/09/2022 - SCA5-434
+12/02/2022 - HN85690
+05/18/2023 - HD7B-3000 
+06/3-/2-23 - PartParm
+07/14/2023 - SCA5-471 
+16/08/2023 - DSWP2
+08/16/2023 - APIFND-2816
+09/07/2023 - DSWP2-19882
+09/08/2023 - DSWP2-19882
+09/08/2023 - DSWP2-19882
+09/08/2023 - DSWP2-19882
+09/10/2023 - DSWP2-19882
+09/10/2023 - DSWP2-19882
+09/11/2023 - YTRGW-4398
+09/19/2023 - ASP-9625
+09/29/2023 - DSWP2-19882
+09/29/2023 - DSWP2-19882
+09/29/2023 - DSWP2-19882
+10/03/2023 - ASP-11254
+10/03/2023 - ASP-11254
+10/03/2023 - ASP-11254
+25/03/2023 - SCA5-1481
+27/03/2023 - SCA5-1481
+30/03/2023 - SCA5-1481
+10/30/2023- UFD3-31206
+10/30/2023- UFD3-31206
+10/30/2023- UFD3-31206
+11/08/2023 - APIFND-2816
+23/11/2023 - SCA5-1481
+09/13/2023 - ADAMIGR-27015
+10/3/2023 - hotfix ADAMIGR-27015
+11/30/2024 - ASG Log file
+11/30/2024 - turn off debug
+04/12/2023 - SCA5-1481
+12/05/2023 - DSWP1-15965
+04/12/2023 - SCA5-1481
+04/12/2023 - rebuild
+12/13/2023 - DSWP1-16000
+13/12/2023 - hotfix ADAMIGR-30281
+15/12/2023 - hotfix ADAMIGR-30458
+01/17/2024 - ADAMIGR-32232
+01/22/2024 - hotfix ADAMIGR-32847
+01/24/2024 - hotfix ADAMIGR-33031
+06/02/2024 - build re trigger
+02/07/2024 - retrigger
+12/02/2024 - retrigger
+12/02/2024 - retrigger
+13/02/2024 - retrigger
+13/02/2024 - retrigger
+13/02/2024 - retrigger
+13/02/2024 - retrigger
+13/02/2024 - retrigger
+14/02/2024 - retrigger
+14/02/2024 - retrigger
+14/02/2024 - retrigger
+15/02/2024 - retrigger
+13/02/2024 - hotfix ADAMIGR-34065
+26/02/2024 - hotfix retrigger
+27/02/2024 - hotifx ADAMIGR-33721
+22/02/2024 - Build trigger
+22/02/2024 - retrigger
+26/02/2024 - retrigger
+28/03/2024 - retrigger
+29/03/2024 - retrigger
+01/04/2024 - retrigger
+24/04/2024 - retrigger - 1
+25/04/2024 - retrigger
+retrigger
+retrigger
+retrigger
+retrigger
+retrigger
+hotfix/ADAMIGR-37665 retrigger
+hotfix/ADAMIGR-38310 retrigger
+hotfix/ADAMIGR-38371 retrigger
+retrigger
+rebuild
+rebuild
+rebuild
+retrigger
+retrigger
+retrigger
+trigger build
+trigger build
+trigger build
+24/07/2024 - retrigger
+25/07/2024 - retrigger
+26/07/2024 - Build trigger
+trigger build
+trigger build
+trigger build
+retrigger
+retrigger
+rebuild
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build 08/29/24
+trigger build
+trigger build 09/03/24
+trigger build.
+rebuild for logback issue 23/10
+trigger build
+trigger build for logback 24/10
+trigger build
+trigger build
+trigger build#4
+trigger build for spring-ws logs
+trigger build for spring-ws logs#2
+trigger build for spring-ws logs#3
+trigger build for spring-ws logs#4
+trigger build
+trigger build for spring-ws logs#5
+trigger build
+trigger build#1
+trigger build#2
+trigger build#3
+trigger build#3
+trigger build for DRE-72556
+trigger build
+Trigger build 19/11
+trigger build for PD
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+re-trigger build for DVSIT-24319
+re-trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build
+trigger build for CUW-15035
+retrigger-20-12-24
+retrigger-23-12-24
+retrigger-23-12-24
+retrigger-24-12-24
+retrigger-30-12-24
+retrigger-02-01-25
+retrigger-08-01-25
+retrigger-10-01-25
+retrigger-10-01-25
+trigger build for DVSIT-24319
+trigger build for DVSIT-24319
+trigger build for DVSIT-25057
+retrigger-27-01-25
+trigger build for DVSIT-25057
+trigger build for ASP-59886
+trigger build for ASP-59886-1
+trigger build for ASP-59886-2
+trigger build#2
+trigger build for DVSIT-25057
+trigger build for DVSIT-25057
+trigger build for DVSIT-25057
+trigger build for DVSIT 25057
+trigger build for DVSIT 25057
+retrigger build
+trigger build for DVSIT 25057
+trigger build for DVSIT 25057
+trigger build part parm
+trigger build
+trigger build for DVS
+trigger build for DVSIT 25057
+trigger build for DVSIT 25057
+trigger build 
+trigger build 
+trigger build
+trigger build for DVSIT 25148
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build 28-02
+trigger build 28-02
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build
+trigger build 11-03
+trigger build 12-03
+trigger build 12-03
+trigger build 12-03
+trigger build 17-03
+trigger build 17-03-
+trigger build 18-03
+trigger build 18-03
+trigger build 19-03
+trigger build 19-03
+trigger build 19-03
+trigger build 19-03
+trigger build 20-03
+trigger build 20-03
+trigger build 20-03
+trigger build 21-03
+trigger build 21-03
+trigger build 21-03
+trigger build 21-03
+feature/HD7B-3179
+trigger build 24-03
+trigger build 24-03
+trigger build 24-03
+trigger build 25-03
+trigger build 25-03
+trigger build 25-03
+trigger build 26-03
+trigger build 26-03-1
+trigger build 27-03
+trigger build 27-03
+trigger build 27-03
+trigger build 28-03
+trigger build 01-04
+trigger build 02-04
+trigger build 03-04
+trigger build DSWP1-18826
+trigger build 24-04
+trigger build 05-01
+trigger build 05-05
+trigger build 06-05
+trigger build 07-05
+trigger build
+trigger build 2
+trigger build DSWP1-18826_1
+trigger build DSWP1-18826_2
+trigger build
+trigger build TCOE-2233_4
+trigger build DSWP1-19605
+trigger build 23-05
+rebuild 06-12
+trigger build 10-06
+trigger build 6/16
+trigger build 6/17
+trigger build 6/17_2
+trigger build 17-06-01
+trigger build 17-06-02
+trigger build 19-06
+trigger build 26-06
+trigger build 15-07
+trigger build 21-07
+trigger build 22-07-01
+trigger build 22-07-02
+trigger build 22-07-03
+trigger build 22-07-04
+trigger build 24-07-04
+trigger build 28-07-04
+rebuild
+trigger build 28-07-04
+trigger build 30-07-04
+trigger build 30-07-04

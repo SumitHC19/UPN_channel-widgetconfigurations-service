@@ -1,0 +1,1092 @@
+{
+	"info": {
+		"_postman_id": "1bd2de83-7f23-419f-8629-27f1218b872b",
+		"name": "Automated_CoreWidgetRegression_Collection",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "4322803"
+	},
+	"item": [
+		{
+			"name": "PreTest",
+			"item": [
+				{
+					"name": "Auth Token",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get oauth token\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.auth_status).to.equal('AUTHENTICATED')",
+									"    console.log('oauth token = ' + jsonData.access_token);",
+									"    pm.collectionVariables.set('oauthToken', jsonData.access_token);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"auth": {
+							"type": "basic",
+							"basic": [
+								{
+									"key": "password",
+									"value": "{{oauthPassword}}",
+									"type": "string"
+								},
+								{
+									"key": "username",
+									"value": "{{oauthUsername}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "raw",
+							"raw": ""
+						},
+						"url": {
+							"raw": "https://{{apiServer}}/api/oauth/token",
+							"protocol": "https",
+							"host": [
+								"{{apiServer}}"
+							],
+							"path": [
+								"api",
+								"oauth",
+								"token"
+							]
+						},
+						"description": "Retrieves an oAuth token."
+					},
+					"response": []
+				},
+				{
+					"name": "startSessionForPerson",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"start person session\", function() {",
+									"    pm.response.to.have.status(200);",
+									"    var jsonData = pm.response.json();",
+									"    pm.expect(jsonData.message).to.equal('success');",
+									"    pm.response.to.have.header('alightPersonSessionToken');",
+									"    console.log('alightPersonSessionToken = ' + pm.response.headers.get('alightPersonSessionToken'));",
+									"    pm.collectionVariables.set('alightPersonSessionToken', pm.response.headers.get('alightPersonSessionToken'));",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						},
+						{
+							"listen": "prerequest",
+							"script": {
+								"exec": [
+									""
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{oauthToken}}"
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "brokerUserId",
+									"value": "{{brokerUserId}}",
+									"type": "text"
+								},
+								{
+									"key": "accessToken",
+									"value": "{{oauthToken}}",
+									"type": "text"
+								},
+								{
+									"key": "clientId",
+									"value": "{{clientId}}",
+									"type": "text"
+								},
+								{
+									"key": "systemInstanceId",
+									"value": "{{systemInstanceId}}",
+									"type": "text"
+								},
+								{
+									"key": "subjectId",
+									"value": "{{subjectId}}",
+									"type": "text"
+								},
+								{
+									"key": "subjectType",
+									"value": "{{subjectType}}",
+									"type": "text"
+								},
+								{
+									"key": "testCfg",
+									"value": "{{testCfg}}",
+									"type": "text"
+								},
+								{
+									"key": "testCfgMap",
+									"value": "[{\"clientId\":\"{{clientId}}\",\"testCfg\":\"{{trnsId}}\",\"systemInstanceId\" : \"\"}] ",
+									"type": "text"
+								},
+								{
+									"key": "idMapping",
+									"value": "[{\"platformType\":\"TBA\",\"clientId\":\"{{clientId}}\",\"platformExternalId\":\"{{subjectId}}}\",\"platformInternalId\":\"{{platformInternalId}}\",\"sourceTestCfg\":\"{{trnsId}}}\",\"domain\":\"DB,DC,HM,YTR\",\"normalizedClientId\":\"{{clientId}}}\",\"roleType\":\"rkp\"}]",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "https://{{apiServer}}/api/session/startSessionForPerson",
+							"protocol": "https",
+							"host": [
+								"{{apiServer}}"
+							],
+							"path": [
+								"api",
+								"session",
+								"startSessionForPerson"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get Service Version",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"get service version - pretest\", function() {",
+									"   pm.response.to.have.status(200);",
+									"   var jsonData = pm.response.json();",
+									"   let serviceName = jsonData.Metadata.ServiceName;",
+									"   let serviceVersion = jsonData.Environments[pm.environment.get('targetEnvironmentName')].Service.ImageVersion;",
+									"   pm.globals.set('serviceName', serviceName);",
+									"   pm.globals.set('serviceVersion', serviceVersion);",
+									"});"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "Authorization",
+								"value": "Bearer {{githubToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://raw.githubusercontent.com/AlightEngineering/app-deployment-ecs/main/src/deployments/{{serviceName}}.json",
+							"protocol": "https",
+							"host": [
+								"raw",
+								"githubusercontent",
+								"com"
+							],
+							"path": [
+								"AlightEngineering",
+								"app-deployment-ecs",
+								"main",
+								"src",
+								"deployments",
+								"{{serviceName}}.json"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Health Check",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"pm.test(\"response is ok\", function() {",
+									"    pm.response.to.have.status(200);",
+									"})"
+								],
+								"type": "text/javascript"
+							}
+						}
+					],
+					"request": {
+						"method": "GET",
+						"header": [
+							{
+								"key": "alightPersonSessionToken",
+								"value": "{{alightPersonSessionToken}}",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "https://{{apiServer}}/api/{{servicePath}}/health",
+							"protocol": "https",
+							"host": [
+								"{{apiServer}}"
+							],
+							"path": [
+								"api",
+								"{{servicePath}}",
+								"health"
+							]
+						},
+						"description": "Health check"
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Test - Home",
+			"item": [
+				{
+					"name": "TestCase1-DebugAPI",
+					"item": [
+						{
+							"name": "Debug_ALL",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"// Test for response body containing specific string\r",
+											"pm.test(\"Response body contains the string 'param'\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include('param');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "clientId",
+										"value": "{{clientId}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightPersonSessionToken",
+										"value": "{{alightPersonSessionToken}}"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"locale\":\"en_US\",\"roleId\":\"{{roleId}}\",\"channelRequestData\":\"URL::home::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::geoloc::US::csid::default::gblsId::9ade39a3-74e5-469a-b165-cc8a81382d0b_2022-03-28-20.53.32.225000::uxPageRequestId::ee479613-cb85-458a-90d0-0cef09dfc54f::pageName::home::deviceType::null::sessionCreatedTimestamp::2022-03-28-20.53.32.225000::widgetName::null::ds::2022-03-29::URL::home::\",\"clientId\":\"{{clientId}}\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n                \r\n                \"operation\":\"configset\",\r\n                \"linkKeys\": [\r\n                             {\r\n                               \"requestType\": \"link\",\r\n                                \"linkName\": \"GMC_PAGE_LINK\"\r\n                                  }\r\n                            ],\r\n                               \"textKeys\":[\r\n                                {\"name\":\"AA\"\r\n                                }\r\n                                ],\r\n                \"exprKeys\": [\r\n                             {\r\n                              \"name\": \"ALWAYS_PASS\",\r\n                              \"type\": \"regular\"\r\n                               }\r\n                            ],\r\n                \"paramKeys\":[\r\n                 {\r\n                 \t\"name\" : \"Portal_Parms.Upoint_ClientName\"\r\n                 }\r\n               ]\r\n }"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/configurationList/get",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"configurationList",
+										"get"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Debug_ALL Neg Sc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "clientId",
+										"value": "{{clientId}}",
+										"disabled": true
+									},
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightPersonSessionToken",
+										"value": "{{alightPersonSessionToken}}"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"locale\":\"en_US\",\"roleId\":\"{{roleId}}\",\"channelRequestData\":\"URL::home::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::false::tgtSite::::geoloc::US::csid::default::gblsId::9ade39a3-74e5-469a-b165-cc8a81382d0b_2022-03-28-20.53.32.225000::uxPageRequestId::ee479613-cb85-458a-90d0-0cef09dfc54f::pageName::home::deviceType::null::sessionCreatedTimestamp::2022-03-28-20.53.32.225000::widgetName::null::ds::2022-03-29::URL::home::\",\"clientId\":\"{{clientId}}\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n                \r\n                \"operation\":\"configset\",\r\n                \"linkKeys\": [\r\n                             {\r\n                               \"requestType\": \"link\",\r\n                                \"linkName\": \"GMC_PAGE_LINK\"\r\n                                  }\r\n                            ]\r\n                               \"textKeys\":[\r\n                                {\"name\":\"AA\"\r\n                                }\r\n                                ],\r\n                \"exprKeys\": [\r\n                             {\r\n                              \"name\": \"ALWAYS_PASS\",\r\n                              \"type\": \"regular\"\r\n                               }\r\n                            ],\r\n                \"paramKeys\":[\r\n                 {\r\n                 \t\"name\" : \"Portal_Parms.Upoint_ClientName\"\r\n                 }\r\n               ]\r\n }"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/configurationList/get",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"configurationList",
+										"get"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Widget_Get",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var responseJSON = pm.response.json();",
+											"",
+											"// Test for the presence of specific keys and their types",
+											"pm.test(\"Response body contains specific keys with expected types\", function () {",
+											"    responseJSON.forEach(function(item) {",
+											"        pm.expect(item).to.have.all.keys(",
+											"            \"ENABLE_NEW_BROWSER_MSG\", ",
+											"            \"IS_HEADER_FOOTER_V2\", ",
+											"            \"POST_BROWSER_BLOCK_DATE_EXPR\", ",
+											"            \"IS_PSP_USR_CNTXT\", ",
+											"            \"IS_NAV_VISIBLE\", ",
+											"            \"ER_Portal_Master_Switch_Upoint\", ",
+											"            \"IS_SPM_ELIG\", ",
+											"            \"IS_Search_Enabled\", ",
+											"            \"NEW_ORACLE_CHAT_CLNT_EXPR\", ",
+											"            \"runtimeLogoExpression\", ",
+											"            \"IS_CBA_CLIENT\", ",
+											"            \"IS_HOME_HIDDEN\", ",
+											"            \"IS_CHAT_AVLB\", ",
+											"            \"IS_Home_Suppressed\", ",
+											"            \"ADOPT_UPOINT_REDESIGN\", ",
+											"            \"HEADER_URGENTMSG_EXPR\", ",
+											"            \"Enable_Qualtrics_Feedback\", ",
+											"            \"HAS_SEARCH_FUNCTIONALITY\", ",
+											"            \"IS_SPM_BLACKOUT\", ",
+											"            \"ALWAYS_PASS\", ",
+											"            \"IS_GMC_BADGE_ELIG\", ",
+											"            \"IS_DISPLAY_FLYOUT\", ",
+											"            \"AF_MAS_ENABLED\", ",
+											"            \"Header.showChat\", ",
+											"            \"HEADER_FOOTER_VERSION\", ",
+											"            \"IS_PRE_AUTH_SEARCH_BOX_ENABLED\", ",
+											"            \"NEW_LIVE_CHAT_ENV_URL\", ",
+											"            \"Mailbox.ClientUsesMailbox\", ",
+											"            \"Header.isAdminStatePortal\", ",
+											"            \"UPN_HM_LOADING_TXT\", ",
+											"            \"current_selection\", ",
+											"            \"copyrightTxt\", ",
+											"            \"FEEDBACK_TITLE_MSG\", ",
+											"            \"HEADER_URGENTMSG_TEXT\", ",
+											"            \"close_window_title\", ",
+											"            \"CLASSIC_MYPROFILE_TOOLTIP_TX\", ",
+											"            \"accessibilitybypassblockKey\", ",
+											"            \"HEADER_CLOSE_WINDOW_LBL\", ",
+											"            \"Hardcoded_header_viewjspLangMenu_assetGroup\", ",
+											"            \"CSBAR_ASSET\", ",
+											"            \"LOG_OFF\", ",
+											"            \"UPoint_User_Context\", ",
+											"            \"PRIMARY_ACCT_ASSET_GROUP\", ",
+											"            \"PSP_ROLE_ACCOUNT\", ",
+											"            \"UCE_ROLE_ACCOUNT\", ",
+											"            \"CHOOSE_NEW_CUSTOMER\", ",
+											"            \"LOG_ON_LINK\", ",
+											"            \"GMC_ACTION_NEEDED_TITLE_ASSET_GROUP\", ",
+											"            \"GMC_ALERTS_ACTION_FOR_ASSET_GROUP\", ",
+											"            \"GMC_ALERTS_DEDALINE_TEXT_ASSET_GROUP\", ",
+											"            \"GMC_URGENT_DEADLINE_ASSET_GROUP\", ",
+											"            \"GMC_UPDATES_TITLE_TEXT_ASSET_GROUP\", ",
+											"            \"GMC_SPM_TEXT_ASSET_GROUP\", ",
+											"            \"GMC_TAB_ACN_NEED_ITEM_ASST\", ",
+											"            \"GMC_SLCT_LNK_ACS_SEC_MLBX_ASST\", ",
+											"            \"GMC_SLCT_LNK_READ_UPDT_ASST\", ",
+											"            \"BADGEMSG_YOUHVEMSGS_ASSET_GRP\", ",
+											"            \"BADGEMSG_MESSAGETXT_ASSET_GROUP\", ",
+											"            \"BADGEMSG_YOUHVE_ASSET_GRP\", ",
+											"            \"BADGEMSG_MSGS_ASSET_GRP\", ",
+											"            \"BADGEMSG_IMPMSGS_ASSET_GRP\", ",
+											"            \"CsEcs140ReadOnlyNotc_pageHeading\", ",
+											"            \"CsEcs140ReadOnlyNotc_buttonText_Continue\", ",
+											"            \"CsEcs140ReadOnlyNotc_customerTxt\", ",
+											"            \"CsEcs140ReadOnlyNotc_userTxt\", ",
+											"            \"CsEcs140ReadOnlyNotc_hasUpdtdAcs\", ",
+											"            \"CsEcs140ReadOnlyNotc_noUpdtdAcs\", ",
+											"            \"CsEcs140ReadOnlyNotc_pageText\", ",
+											"            \"NONRECORD_ASSET_GROUP\", ",
+											"            \"Hardcoded_YOUR_PROFILEMenu_ASSET\", ",
+											"            \"CHAT_UNAVAILABLE_ASSET\", ",
+											"            \"HEADER_HRBPO_ACCOUNT_CURRENT_VIEW\", ",
+											"            \"CLNT_NAME_KEY_ASSET\", ",
+											"            \"PRM_COMP_BNFT_KEY_ASSET\", ",
+											"            \"YOUR_PROFILE_ASSET\", ",
+											"            \"HEADER_HRBPO_ACCOUNT_ROLES_LBL\", ",
+											"            \"READ_ONLY_ASSET\", ",
+											"            \"UNAVAILABLE_ASSET\", ",
+											"            \"CSECS075LRNABTSRCH_LINKTXT_FEEDBACK_ASSET\", ",
+											"            \"LIVE_CHAT_ASSET\", ",
+											"            \"EDIT_MODE_ASSET\", ",
+											"            \"HEADER_TBA_ACCOUNT_LBL\", ",
+											"            \"CUSTOMER_PROFILE_LINK\", ",
+											"            \"CONTACT_US\", ",
+											"            \"REDESIGN_SRCHTX_ICON_TITLE\", ",
+											"            \"REDESIGN_SRCHTX_FIELD_TITLE\", ",
+											"            \"REDESIGN_SRCHTX_POPOVER_TITLE\", ",
+											"            \"excludedLinkWarningMessage\", ",
+											"            \"warnMsgYesBtnLabel\", ",
+											"            \"warnMsgNoBtnLabel\", ",
+											"            \"excludedLinkWarningMessageEOI\", ",
+											"            \"GMC_LANDING_TIPSNEWS_LINK_TEXT_ONE_ASSET_GROUP\", ",
+											"            \"GMC_LANDING_TIPSNEWS_LINK_TITLE_ASSET_GROUP\", ",
+											"            \"GMC_LANDING_TIPSNEWS_LINK_ASSET_GROUP\", ",
+											"            \"GMC_LANDING_TIPSNEWS_LINK_TEXT_ASSET_GROUP\", ",
+											"            \"PRTL_DIRECT\", ",
+											"            \"GMC_PAGE_LINK\", ",
+											"            \"AH_CUSTOM_LANG_NAME_GROUP\", ",
+											"            \"AUXNAV_GROUP\", ",
+											"            \"getCertifiedBrowserJSON\", ",
+											"            \"BROWSER_COMPATIBILITY_MSG_ON_PAGES\", ",
+											"            \"browserCompatibilityAlertMessageText\", ",
+											"            \"BROWSER_BLOCK_DATE\", ",
+											"            \"browserCompatibilityModeIE\", ",
+											"            \"BROWSER_COMPATIBILITY_MSG_SWITCH\", ",
+											"            \"YOUR_PROFILE_LINK_ITEMS\", ",
+											"            \"navigationItems\", ",
+											"            \"LINK_MAP\", ",
+											"            \"masPage\", ",
+											"            \"postAuth\", ",
+											"            \"activeBusinessAccountsAvailable\", ",
+											"            \"ecsCssoUser\", ",
+											"            \"showChangeAccount\", ",
+											"            \"pagePrimary\", ",
+											"            \"adminUpdateAccess\", ",
+											"            \"ecsAdmin\", ",
+											"            \"ecsAdminUserIgnoreAuth\", ",
+											"            \"fullName\", ",
+											"            \"lastName\", ",
+											"            \"firstName\", ",
+											"            \"ahUser\", ",
+											"            \"accTypeHolder\", ",
+											"            \"noOfAccountWithLR\", ",
+											"            \"primaryAccount\", ",
+											"            \"isEcsSearchPage\", ",
+											"            \"isUdpSwitchEnabled\", ",
+											"            \"isLrWithSingleTBAAcct\", ",
+											"            \"allLRServiceAccounts\", ",
+											"            \"accounts\", ",
+											"            \"hrbpoRoleAccount\", ",
+											"            \"tbaAcctsForDisplay\", ",
+											"            \"UPoint_header_logo_display\", ",
+											"            \"Header.HEADER_FL_NAME_SOURCE\", ",
+											"            \"isThirdPartySSOKeepAlive\", ",
+											"            \"qualtricsParam\", ",
+											"            \"upointRedesignLogoParam\", ",
+											"            \"upointRedesignLogoSmallParam\", ",
+											"            \"siteBrandLogoUrlParam\"",
+											"        );",
+											"",
+											"        // Check that the value of each key is of the expected type",
+											"        pm.expect(item.ENABLE_NEW_BROWSER_MSG).to.have.property('type').that.is.a('string');",
+											"        pm.expect(item.IS_HEADER_FOOTER_V2).to.have.property('type').that.is.a('string');",
+											"        pm.expect(item.POST_BROWSER_BLOCK_DATE_EXPR).to.have.property('type').that.is.a('string');",
+											"        // Repeat for other keys as necessary, adjusting the checks as appropriate",
+											"    });",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightPersonSessionToken",
+										"value": "{{alightPersonSessionToken}}"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{{alightRequestHeader}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n                \r\n                \"operation\":\"configset\",\r\n                \"linkKeys\": [\r\n                             {\r\n                               \"requestType\": \"link\",\r\n                                \"linkName\": \"GMC_PAGE_LINK\"\r\n                                  }\r\n                            ],\r\n                               \"textKeys\":[\r\n                                {\"name\":\"AA\"\r\n                                }\r\n                                ],\r\n                \"exprKeys\": [\r\n                             {\r\n                              \"name\": \"ALWAYS_PASS\",\r\n                              \"type\": \"regular\"\r\n                               }\r\n                            ],\r\n                \"paramKeys\":[\r\n                 {\r\n                 \t\"name\" : \"Portal_Parms.Upoint_ClientName\"\r\n                 }\r\n               ]\r\n }"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/header",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"header"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Widget_Get Neg_sc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {
+									"host": true
+								}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightPersonSessionToken",
+										"value": "{{alightPersonSessionToken}}"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{{alightRequestHeader}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n                \r\n                \"operation\":\"configset\"\r\n                \"linkKeys\": [\r\n                             {\r\n                               \"requestType\": \"link\",\r\n                                \"linkName\": \"GMC_PAGE_LINK\"\r\n                                  }\r\n                            ],\r\n                               \"textKeys\":[\r\n                                {\"name\":\"AA\"\r\n                                }\r\n                                ],\r\n                \"exprKeys\": [\r\n                             {\r\n                              \"name\": \"ALWAYS_PASS\",\r\n                              \"type\": \"regular\"\r\n                               }\r\n                            ],\r\n                \"paramKeys\":[\r\n                 {\r\n                 \t\"name\" : \"Portal_Parms.Upoint_ClientName\"\r\n                 }\r\n               ]\r\n }"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/header",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"header"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Widget_Get public",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"// Test for response body containing specific string",
+											"pm.test(\"Response body to contain the string 'type'\", function () {",
+											"    pm.expect(pm.response.text()).to.include('type');",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{{alightRequestHeader}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/header/public",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"header",
+										"public"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Widget_Get public Neg_sc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {
+									"host": true
+								}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{{alightRequestHeader}}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/header/public",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"header",
+										"public"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TestCase2-Public_call",
+					"item": [
+						{
+							"name": "Public_Call_widget",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {",
+											"    pm.response.to.have.status(200);",
+											"});",
+											"",
+											"var responseJSON = pm.response.json();",
+											"",
+											"// Test to check if the response body is an array",
+											"pm.test(\"Response body is an array\", function () {",
+											"    pm.expect(responseJSON).to.be.an('array');",
+											"});",
+											"",
+											"// Test to check if each object in the array has the 'data' property and that it is not null",
+											"pm.test(\"Each object in the response array contains 'expr' key and is not null\", function () {",
+											"    responseJSON.forEach(function(item) {",
+											"        pm.expect(item).to.have.property('expr');",
+											"        pm.expect(item.data).to.not.be.null;",
+											"    });",
+											"});"
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"clientId\":\"19920\",\"locale\":\"en_US\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"operation\": \"configSet\",\r\n    \"exprKeys\": [\r\n        {\r\n            \"name\": \"ALWAYS_PASS\"\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/configurationList/get/public",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"configurationList",
+										"get",
+										"public"
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Public_Call_widget Neg_sc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {",
+											"    pm.response.to.have.status(400);",
+											"});",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"request": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"clientId\":\"19920\",\"locale\":\"en_US\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"operation\": \"configSet\"\r\n    \"exprKeys\": [\r\n        {\r\n            \"name\": \"ALWAYS_PASS\"\r\n        }\r\n    ]\r\n}"
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/configurationList/get/public",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"configurationList",
+										"get",
+										"public"
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				},
+				{
+					"name": "TestCase3_Validate_blackout_public_call",
+					"item": [
+						{
+							"name": "Validate_blackout",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 200\", function () {\r",
+											"    pm.response.to.have.status(200);\r",
+											"});\r",
+											"\r",
+											"pm.test(\"Response body contain the string 'status'\", function () {\r",
+											"    pm.expect(pm.response.text()).to.include('status');\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"locale\":\"en_US\",\"clientId\":\"19920\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/validateblackout/public?brokerUserId=Portal",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"validateblackout",
+										"public"
+									],
+									"query": [
+										{
+											"key": "brokerUserId",
+											"value": "Portal"
+										}
+									]
+								}
+							},
+							"response": []
+						},
+						{
+							"name": "Validate_blackout Neg_sc",
+							"event": [
+								{
+									"listen": "test",
+									"script": {
+										"exec": [
+											"pm.test(\"Status code is 400\", function () {\r",
+											"    pm.response.to.have.status(400);\r",
+											"});\r",
+											""
+										],
+										"type": "text/javascript",
+										"packages": {}
+									}
+								}
+							],
+							"protocolProfileBehavior": {
+								"disableBodyPruning": true,
+								"disabledSystemHeaders": {
+									"host": true
+								}
+							},
+							"request": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Content-Type",
+										"value": "application/json"
+									},
+									{
+										"key": "alightRequestHeader",
+										"value": "{\"locale\":\"en_US\",\"clientId\":\"19920\"}"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": ""
+								},
+								"url": {
+									"raw": "https://{{apiServer}}/api/channel/widgetconfigurations/channel/widgetConfigurations/validateblackout/public?brokerUserId=Portal",
+									"protocol": "https",
+									"host": [
+										"{{apiServer}}"
+									],
+									"path": [
+										"api",
+										"channel",
+										"widgetconfigurations",
+										"channel",
+										"widgetConfigurations",
+										"validateblackout",
+										"public"
+									],
+									"query": [
+										{
+											"key": "brokerUserId",
+											"value": "Portal"
+										}
+									]
+								}
+							},
+							"response": []
+						}
+					]
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "serviceName",
+			"value": "channel-widgetconfigurations"
+		},
+		{
+			"key": "servicePath",
+			"value": "channel/widgetconfigurations"
+		},
+		{
+			"key": "oauthToken",
+			"value": "eyJhbGciOiJSUzI1NiJ9.eyJicm9rZXJVc2VySWQiOiJEb21haW5UZXN0VXNlciIsImV4cCI6MTU5NzczNDEzMX0.m3t4DV9LHdBhcyatzWcuEv-aGvYUoGRmucoRPK60ACHc9NPCaJ0BbRIzmWnbhjvXUaLEanCGPfnjy7HvMSeT_VKXRioWiXMTO3RtVIt7QgbUzz7CPeqtWXEfYrJgKTXPin5_YaKsk0bmRQ3GdBDYR9Ljtx9Ir4IDTWj_3mfSXfp3efaKg05f5CdLQKUHC5SHg_hwNYFQC4yWB70EIeDqhME_S1AtKTTBZoU27w_NIwHYBV7U6URtyq-RQcIusRAmKVbWA2kd_KvM6cy3ZkzaPeKGAe4pA6epe1XLkLBVFieIqZKaqOtV0otufQ6rqvaq7um9xGJ0pupi9E4Ej-Mwug"
+		},
+		{
+			"key": "alightPersonSessionToken",
+			"value": "2UmToyeKI1CE/y9bmxrUnn4qtwBzmnvNpNJopT2r9W97IKOLLjcnxImXN3upOOMwGGrUXx1rWUAPCXe7N2fmoWvAiHI0D43BCwBvxBzk/xT7okMwhYMtcXvTNVQD23ffB9FVBS+9yQHFjhwdS3+Exwb79/t6iAkKb58zmVxEnmv7MWXKJW4DmY2+jcjZoddgNgvmlsGzJC3PfNlGwzdq1HZxTOr+Y/rkLy5fTcSiMz5CddvmXUSoGOD0YHFFbTyk8M5w+QKKA7V+3w5Zqh0FHiLlJXGGVAW46xAdKgZnPPm1In8BwvsYJETO9q2w5749iCCGigjtv3wFVGC5bXSfgRub29hqAupf6zdlCXEl+zIMnrSbmK8vFzBmzfK/lDDDXycCDmDAalGYZMbqOo55kWrJhk8QxiT9aTBZxxWfR6KxD3pIaRVeNidKx4yC6X4rAZ2ovQIaXbFzEsa5KQ2526TjFWnXVNJ9iAJoyld+nV2YrF++boV8fLf/xZtetJRVhTEkDQ2FplZthrnJrOR/5wapn0vfJX/iG9Bvcn8f66I77keR4LYh0jRO++hvNZrzSJZyRDSwu76lzH1vjgi7G5jR403hi4Rrr1G8AE9XR5aS1N3DC62UGM6mNjg8n11P9M8OZkLeuvHO42wT1FhsIHHpw3HIzXCj+GfPMLD/6x+NXAEVm//zMoOOylANNyNIQ0ocDU+rj9cdnfBab/agRTxSr7zFZrIG1mNc+0o5tr4UFPt70HxdwuLhfcZmC1771wqB07hmvDcIpmxU4hfMdOzfbT9nh3ik9gz9sGu0TJnFsaHOwzzrEqEI7t/yqlT3Fy+Z49LnG2cW/oRTQsaGbBCAkoBo+c2vow5eEuYd4nLIW4I1TwvnkocKxS0rBWW6mxSdQDmfFInzi+tkwsFqglHHXpuar/zf5lHkLAehI2icIkMQASLfOrVbh+hbSh152vqRcMKKsjZqWAKTfG93KpgtgCb5JVLm0WXk1HO0O/jAXJjkVAiRYdq65cPReJDVcPgV/oyQ+In+r7dqasFpSUDAryKIfXRYKcHefsjsybQVYN4j83SwfGAOT9699jgL/ctQ7V22g/VaYhWCjNGFD76ingjdDLliEZNwHvZbYrBBuN6xky/26wcDsCltFddnKKZrYb9xEfkIC0z8AzchBZcQdsioZB3bzRkfGbxTWr7kFrmcArNNV6Yhk/4TTIZp39AdNmUDAi5LZUjNcYhw6Dx+BhkilxWznb5/RAI7MrTQ1PSsQJiO6P8ZREZ2w0GTlOa6x9Gfa/4sUJYwF6YPkrG+YBwRRqDP+mbrw1Q+sF5SW7v3HcfSe5tnqH2p4M0CbXMRcI92sjm/RuWbtcKUgvVD0R5HxvE0P4JsuxECyd/8QD3rbjtDcm5EAPgdrQ+1lB+rEVgOErJLYEG8z0MkBPqc+ieih0x7YDunZ4BLlnR9jmkaMACBr56TBSEgnTXEc9pc4W1AAYxFULfsFpfcWsyljp/Huj/cmKNJZIPij2QmEFAFCybtTgvNKNufZWsIZkVS/WzBVg871o6/Nhzp+3EW+c9PFsBaquP/tXsSPT6X1EC9vfHdzEJ4EPKy8Ft+OnVxsCY73XZMxRzuVpSbg/JoUhXziTgyNLNuPgfsg5NtRZAp5ElNE2RHROYhzBHWFIC2zzhwvyO5V2CBCoi9lZofGBydT1WrBHPOy9hVhr3vbOqqZdArfQoGqHcPVnEkEFCXnmmq5tnTfsf/+y+DXcr0kMoA+f99qQ5+J/Sy9AQqRXFrSemFoCpNq5PXXlfnG2lE53l2jJTslfU/Y+KrpQJ0ReKKOP6cenwAxmtTPDh7ost8UwvCyaBkW4jAmnZW/oeL5skseKiCAoUWEClQ2kWnRe3Rwt+/fN44TQ2r8cpHA8Mg0ov5RG2ft2DTYf+u"
+		},
+		{
+			"key": "alightRequestHeader",
+			"value": "{\"channelRequestData\":\"URL::gmc?linkId=GMC_PAGE_LINK::orgName::earth::device::Desktop::customFields::{business.CORE=19920_portal,business.CM=19920_1.0,business.DB=19920_1.0,business.DC=19920_1.0,business.HM=19920_1.0,clientId.CM=19920,primary.clientId=19920,business.neworgciqa=19920_1.0,gmc.yanconfig=19920,clientId.YTR=19920,business.YSA=19920_09754_1.0,clientId.YSA=19920,modelId.YSA=09754,business.YTR=19920_1.0,enableDynamicURL=false,liferay.url=,awlds.componentVersion=v1-latest,awlds.fontAwesomeVersion=v6-latest,sessionStorageClearTime=1,activeProfile=int,orgName=earth}::gblsId::6a08a80c-5799-41e1-9bf0-3a36d58145e1_2024-11-20-04.19.14.751000::uxPageRequestId::null::pageName::gmc::deviceType::Desktop::sessionCreatedTimestamp::2024-11-20-04.19.14.751000::widgetName::null::csso::logon::brokerUserId::Portal::clientId::19920::aid::upoint-web::transmit::true::userId::125125999::MAS_CURRENT_REQUESTED_ACTIVE_ACCT_TYPE::TBA::IS_HIDE_PRIMARY_ACCOUNT_IN_MAS_DROP_DOWN::true::testCfg::D$EB::allTestCfg::19920_1.0=D$EB;19920_09754_1.0=D$EB::udptestCfg::T1POOL0E::udpEnabled::true::upointURL::https://cl219-dv.euw-dev.aws.alight.com::subjectType::PRSN::emailFlowYbrFlag::true::authenticated::true::emailId::null::ds::2024-11-20::\",\"locale\":\"en_US\",\"clientId\":\"19920\",\"emailFlowYbrFlag\":true,\"normalizedClientId\":\"19920\",\"roleId\":\"19920_1.0-E:@PPT@\"}",
+			"type": "string"
+		}
+	]
+}
